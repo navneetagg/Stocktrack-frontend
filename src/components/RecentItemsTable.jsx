@@ -1,5 +1,6 @@
-const items = [{id:'SKU-836',name:'Wireless-Mouse',quantity:'50',added:'2025-11-07'},{id:'SKU-492',name:'Mechanical-keyboard',quantity:'25',added:'2025-11-08'},{id:'SKU-105',name:'USB-C-hub',quantity:'120',added:'2025-11-08'},{id:'SKU-773',name:'4k-Monitor',quantity:'10',added:'2025-11-06'}]
-function RecentitemsTable(){
+
+function RecentitemsTable({items}){
+    const recentitems = items.slice(0,5);
     return(<div className="bg-zinc-800 p-6 rounded-lg shadow-lg ">
         <h3 className="text-xl font-semibold text-white mb-4">
             Recently Added Items
@@ -15,12 +16,12 @@ function RecentitemsTable(){
 
             </thead>
             <tbody>
-        {items.map((item) => (
-            <tr key={item.id} className="border-b border-zinc-700 hover:bg-zinc-700">
-              <td className="py-4 text-cyan-400">{item.id}</td>
+        {recentitems.map((item) => (
+            <tr key={item._id} className="border-b border-zinc-700 hover:bg-zinc-700">
+              <td className="py-4 text-cyan-400">{item._id}</td>
               <td className="py-4 text-white">{item.name}</td>
               <td className="py-4 text-white">{item.quantity}</td>
-              <td className="py-4 text-gray-300">{item.added}</td>
+              <td className="py-4 text-gray-300">{item.createdAt}</td>
             </tr>
           ))}
             </tbody>

@@ -1,12 +1,40 @@
+import axios from "axios";
+import { useState,useEffect } from "react";
+
 function Inventory(){
-    const allitems = [
-  { id: 'SKU-836', name: 'Wireless Mouse', category: 'Electronics', quantity: 50, price: 29.99 },
-  { id: 'SKU-492', name: 'Mechanical Keyboard', category: 'Electronics', quantity: 25, price: 119.99 },
-  { id: 'SKU-105', name: 'USB-C Hub', category: 'Accessories', quantity: 120, price: 19.99 },
-  { id: 'SKU-773', name: '4K Monitor', category: 'Monitors', quantity: 10, price: 399.00 },
-  { id: 'SKU-231', name: 'Ergonomic Chair', category: 'Furniture', quantity: 15, price: 249.50 },
-  { id: 'SKU-589', name: 'Desk Mat', category: 'Accessories', quantity: 200, price: 14.99 },
-];
+    const [allitems,setallitems]= useState([]);
+    const[loading,setloading]= useState(true);
+    const callitems = async()=>{
+        try{
+        const response = await axios.get('/api/items');
+        setallitems(response.data);
+        }
+        catch(e){
+            console.error("Error",e);
+        }finally{
+            setloading(false);
+        }
+        
+    }
+    
+    useEffect(()=>{
+            callitems();
+        },[])
+        if(loading){
+            return<div>Loading...</div>
+        }
+        const deleteitem = async (id)=>{
+            if(window.confirm("are you sure want to delete this item?")){
+                try{
+                    await axios.delete(`/api/items/${id}`);
+                    setallitems(allitems.filter(item=>item._id!=id));
+                }
+                catch(e){
+                    console.error("Failed to delete item",e);
+                    alert("cannot delete item");
+                }
+            }
+        }
     return(
         <div>
             <div className="flex justify-between items-center mb-6">
@@ -35,7 +63,7 @@ function Inventory(){
                     </thead>
                     <tbody>
                        {allitems.map((item)=>(
-                         <tr key={item.id} className="border-b border-zinc-700 hover:bg-zinc-700">
+                         <tr key={item._id} className="border-b border-zinc-700 hover:bg-zinc-700">
                             <td className="py-4 text-cyan-400">{item.id}</td>
                             <td className="py-4 text-white">{item.name}</td>
                             <td className="py-4 text-gray-300">{item.category}</td>
@@ -43,7 +71,9 @@ function Inventory(){
                             <td className="py-4 text-gray-300">${item.price.toFixed(2)}</td>
                             <td className="py-4 flex space-x-2">
                                 <button className="text-blue-400 hover:text-blue-300">Edit</button>
-                                <button className="text-red-500 hover:text-red-400">Delete</button></td>
+                                <button className="text-red-500 hover:text-red-400"onClick={()=>{
+                                    deleteitem(item._id)
+                                }}>Delete</button></td>
                         </tr>
                        ))}
                     </tbody>
